@@ -1,0 +1,9 @@
+.App {
+  margin: 16px;
+}
+
+.userOutput {
+  border: 1px solid gray;
+  width: 400px;
+  padding: 25px;
+}
