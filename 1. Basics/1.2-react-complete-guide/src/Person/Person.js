@@ -1,7 +1,15 @@
 import React from 'react';
 
-const person = () => {
-    return <p>I'm a Person, and I'm {Math.floor(Math.random() * 30)} old</p>
+const person = ( props ) => {
+
+    //props são enviadas como atributos no html/JSX
+    //children é o que está sendo enviado dentro das tags <>aqui<>
+    return (
+        <div>
+            <p>I'm {props.name} and I am {props.age} years old!</p> 
+            <p>{props.children}</p>
+        </div>
+    )
 };
 
 export default person;
