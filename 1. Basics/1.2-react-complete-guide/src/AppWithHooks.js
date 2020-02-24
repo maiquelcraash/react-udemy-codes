@@ -33,6 +33,7 @@ const app = props => {
 
     return (
         <div className="App">
+            <br/><br/><hr/>
             <h1>Hi, I'm a React App - Hooks</h1>
             <p>This is really working!</p>
             <button onClick={switchNameHandler}>Switch Name</button>
