@@ -1,158 +1,69 @@
 import React, { Component } from 'react';
-import './App.css';
-import Person from './Person/Person';
+import ValidationComponent from './Components/ValidationComponent';
+import CharComponent from './Components/CharComponent'
 
 class App extends Component {
-    //objeto com os estados (propriedades) do componente
-    //para obter melhor performance em gerenciamento de lista, o react pede um Unique ID para cada item da lista
+
     state = {
-        persons: [
-            { id: 'p1', name: 'Max', age: 28 },
-            { id: 'p2', name: 'Manu', age: 29 },
-            { id: 'p3', name: 'Stephanie', age: 26 }
-        ],
-        otherState: 'some other value'
+        text: {
+            content: '', length: 0
+        }
     };
 
     //criando um método dentro do componente
-    switchNameHandler = (newName) => {
-        // console.log('Was clicked!');
-        // DON'T DO THIS: this.state.persons[0].name = 'Maximilian';
+    changeTextListener = (event) => {
 
-        //Atualizando o estado do componente. O React vai fazer merge no estado, ou seja, não precisa atualizar todas as propriedades
-        this.setState({
-            persons: [
-                { name: newName, age: 28 },
-                { name: 'Manu', age: 29 },
-                { name: 'Stephanie', age: 27 }
-            ],
-            showPersons: false
-        });
+        const text = {
+            content: event.target.value, length: event.target.value.length
+        }
+
+        this.setState({ text: text });
     };
 
-    //atualizando estado com base no resultado de evento de um componente filho
-    nameChangeHandler = (event, id) => {
+    deleteCharListener = ((charIndexToDelete) => {
+        let letterArr = this.state.text.content.split('');
+        letterArr.splice(charIndexToDelete, 1);
 
-        //descobrir o index da person a ser alterada
-        const personIndex = this.state.persons.findIndex((p) => {
-            return p.id === id;
-        })
+        const text = letterArr.join("");
 
-        //OPÇÃO 1: copiar o objeto person para um objeto diferente (já que o objeto do react é imutável)
-        const person = {
-            ...this.state.persons[personIndex]
-        }
+        const newText = {
+            content: text,
+            length: text.length
+        };
 
-        //OPÇÃO 2: usar o Object.assign()
-        //const person = Object.assign({}, this.state.persons[personIndex]);
-
-        //atualizando o nome
-        person.name = event.target.value;
-
-        //copiando o array
-        const persons = [...this.state.persons]
-
-        //atualizando o array com a person modificada
-        persons[personIndex] = person;
-
-        this.setState({persons: persons});
-    }
-
-    togglePersonsHandler = () => {
-        const doesShow = this.state.showPersons;
-        this.setState({ showPersons: !doesShow });
-    }
-
-    deletePersonsHandler = (index) => {
-        //Tem que copiar o array primeiro pois o state é imutavel. 
-        let persons = this.state.persons.slice();         //Pode-se usar o método slice sem parâmentros
-        persons = [...persons]                              //Ou pode-se usar o spread operator
-
-        persons.splice(index, 1);                           //remove o elemento do index recebido
-        this.setState({ persons: persons });                //atualiza o estado
-    }
+        this.setState({ text: newText });
+    });
 
     render() {//método obrigatório
-        /* qualquer componente precisa retornar algo para ser renderizado */
 
-        //criando um estilo
-        const style = {
-            backgroundColor: 'white',
-            font: 'inherit',
-            border: '1px solid blue',
-            paddind: '8px',
-            cursor: 'pointer'
-        }
-
-        let persons = null;
-
-        //IF usado no condicionamento abaixo (no return)
-        if (this.state.showPersons) {
-            persons = (
-                <div>
-                    {/* O react automaticamente extrai e tenta renderizar aquilo que retorna do map (que é um array) */}
-                    {this.state.persons.map((person, index) => {
-                        return (
-                            <Person
-                                name={person.name}
-                                age={person.age}
-                                onDelete={() => { this.deletePersonsHandler(index) }}
-                                key={person.id}
-                                change={(event) => { this.nameChangeHandler(event, person.id) }}
-                            />
-                        )
-                    })}
-                </div>
-            )
-        }
+        const letterArr = this.state.text.content.split('');
 
         /* Posso retorna JSX...*/
-        return (                                    /* JSX se escrito entre parênteses, permite multi-linhas */
-            <div className="App">                     {/* só pode ter um root element */}
-                <h1>Hi, I'm a React App - Class Component</h1>
+        return (
+            <div className="App" style={{ margin: "40px" }}>                     {/* só pode ter um root element */}
+                <h2>Exercise</h2>
+                <ol>
+                    <li>Create an input field (in App component) with a change listener which outputs the length of the entered text below it (e.g. in a paragraph).</li>
+                    <li>Create a new component (=> ValidationComponent) which receives the text length as a prop</li>
+                    <li>Inside the ValidationComponent, either output "Text too short" or "Text long enough" depending on the text length (e.g. take 5 as a minimum length)</li>
+                    <li>Create another component (=> CharComponent) and style it as an inline box (=> display: inline-block, padding: 16px, text-align: center, margin: 16px, border: 1px solid black).</li>
+                    <li>Render a list of CharComponents where each CharComponent receives a different letter of the entered text (in the initial input field) as a prop.</li>
+                    <li>When you click a CharComponent, it should be removed from the entered text.</li>
+                </ol>
+                <hr></hr>
 
-                {/* passando o estilo criado como parâmetro*/}
-                {/*  */}
-                <button
-                    style={style}
-                    onClick={this.togglePersonsHandler}>Show Hide Persons
-                </button>
+                <input value={this.state.text.content} onChange={this.changeTextListener}></input>
+                <p>{this.state.text.length}</p>
+                <ValidationComponent strLength={this.state.text.length} />
 
+                {letterArr.map((letter, index) => {
+                    return <CharComponent char={letter} key={index} click={() => this.deleteCharListener(index)} />
+                })}
 
-                {/* EXIBIÇÃO CONDICIONAL 1: Expressão ternária para decidir se vai exibir um bloco de pessoas ou não*/}
-                <h4>Vai exibir usando expressão ternária e todo o bloco de JSX</h4>
-                <p>INFO: You can Click on Manu do see reacts</p>
-                <p>INFO: You can input text on Manu to see reacts</p>
-                {
-                    this.state.showPersons ?
-                        <div>
-                            <Person
-                                name={this.state.persons[0].name}
-                                age={this.state.persons[0].age}
-                            />
-                            <Person
-                                name={this.state.persons[1].name}
-                                age={this.state.persons[1].age}
-                                click={this.switchNameHandler.bind(this, "Marlon")}
-                                change={this.nameChangeHandler}
-                            >
-                                My Hobbies: Racing
-                        </Person>
-                        </div> : null
-                }
-                <hr />
-
-                {/* EXIBIÇÃO CONDICIONAL 2: Outra forma é testar se tem pessoas (ver if lá em cima) e popular a variável diretamente */}
-                <h4>Vai exibir um IF e uma variável que vai ou não conter o JSX</h4>
-                <p>INFO: You can delete one of bellow persons (just one because the list above will broke)</p>
-                {persons}
             </div>
         );
 
-        /* Ou posso criar o HTML no braço */
-        // return React.createElement('div', {className: 'App'},
-        //     React.createElement('h1', null,
-        //         'Conteúdo criado com JS'));
+
     }
 }
 
