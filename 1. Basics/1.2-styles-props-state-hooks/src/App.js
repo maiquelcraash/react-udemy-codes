@@ -45,11 +45,12 @@ class App extends Component {
 
         //criando um estilo
         const style = {
-            backgroundColor: 'white',
+            backgroundColor: 'grenn',
             font: 'inherit',
             border: '1px solid blue',
             paddind: '8px',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            color: 'white'
         }
 
         /* Posso retorna JSX...*/

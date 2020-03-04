@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import Person from './Person/Person';
+import Radium, { StyleRoot } from 'radium';                //Radium is a set of tools to manage inline styles on React elements. Styleroot aumenta as possibilidades para media queries e keyframes
 
 class App extends Component {
     //objeto com os estados (propriedades) do componente
@@ -55,7 +56,7 @@ class App extends Component {
         //atualizando o array com a person modificada
         persons[personIndex] = person;
 
-        this.setState({persons: persons});
+        this.setState({ persons: persons });
     }
 
     togglePersonsHandler = () => {
@@ -77,11 +78,16 @@ class App extends Component {
 
         //criando um estilo
         const style = {
-            backgroundColor: 'white',
+            backgroundColor: 'green',
             font: 'inherit',
             border: '1px solid blue',
             paddind: '8px',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            color: "white",
+            ':hover': {                         //só posso add esses subselectors com o Radium!
+                backgroundColor: 'lightgreen',
+                color: 'black'
+            }
         }
 
         let persons = null;
@@ -104,49 +110,68 @@ class App extends Component {
                     })}
                 </div>
             )
+
+            //alterando dinamicamente uma propriedade CSS
+            style.backgroundColor = "red";
+            style[':hover'] = {                     //O Radium permite add subselectors!!!
+                backgroundColor: 'salmon',
+                color: 'black'
+            }
+        }
+
+        const classes = [];
+        if (this.state.persons.length < 3) {
+            classes.push('red', 'bold');
         }
 
         /* Posso retorna JSX...*/
-        return (                                    /* JSX se escrito entre parênteses, permite multi-linhas */
-            <div className="App">                     {/* só pode ter um root element */}
-                <h1>Hi, I'm a React App - Class Component</h1>
+        return (
+            /* StyleRoot é um componente do Radium que permite aplicar media queries e keyframes */
 
-                {/* passando o estilo criado como parâmetro*/}
-                {/*  */}
-                <button
-                    style={style}
-                    onClick={this.togglePersonsHandler}>Show Hide Persons
+            <StyleRoot>                                
+                <div className="App">                     {/* só pode ter um root element */}
+                    <h1>Hi, I'm a React App - Class Component</h1>
+
+                    {/* passando o estilo criado como parâmetro*/}
+                    {/*  */}
+                    <button
+                        style={style}
+                        onClick={this.togglePersonsHandler}>Show Hide Persons
                 </button>
 
 
-                {/* EXIBIÇÃO CONDICIONAL 1: Expressão ternária para decidir se vai exibir um bloco de pessoas ou não*/}
-                <h4>Vai exibir usando expressão ternária e todo o bloco de JSX</h4>
-                <p>INFO: You can Click on Manu do see reacts</p>
-                <p>INFO: You can input text on Manu to see reacts</p>
-                {
-                    this.state.showPersons ?
-                        <div>
-                            <Person
-                                name={this.state.persons[0].name}
-                                age={this.state.persons[0].age}
-                            />
-                            <Person
-                                name={this.state.persons[1].name}
-                                age={this.state.persons[1].age}
-                                click={this.switchNameHandler.bind(this, "Marlon")}
-                                change={this.nameChangeHandler}
-                            >
-                                My Hobbies: Racing
-                        </Person>
-                        </div> : null
-                }
-                <hr />
+                    {/* EXIBIÇÃO CONDICIONAL 1: Expressão ternária para decidir se vai exibir um bloco de pessoas ou não*/}
+                    <h4>Vai exibir usando expressão ternária e todo o bloco de JSX</h4>
+                    <p>INFO: You can Click on Manu do see reacts</p>
+                    <p>INFO: You can input text on Manu to see reacts</p>
 
-                {/* EXIBIÇÃO CONDICIONAL 2: Outra forma é testar se tem pessoas (ver if lá em cima) e popular a variável diretamente */}
-                <h4>Vai exibir um IF e uma variável que vai ou não conter o JSX</h4>
-                <p>INFO: You can delete one of bellow persons (just one because the list above will broke)</p>
-                {persons}
-            </div>
+
+                    {
+                        this.state.showPersons ?
+                            <div>
+                                <Person
+                                    name={this.state.persons[0].name}
+                                    age={this.state.persons[0].age}
+                                />
+                                <Person
+                                    name={this.state.persons[1].name}
+                                    age={this.state.persons[1].age}
+                                    click={this.switchNameHandler.bind(this, "Marlon")}
+                                    change={this.nameChangeHandler}
+                                >
+                                    My Hobbies: Racing
+                        </Person>
+                            </div> : null
+                    }
+                    <hr />
+
+                    {/* EXIBIÇÃO CONDICIONAL 2: Outra forma é testar se tem pessoas (ver if lá em cima) e popular a variável diretamente */}
+                    <h4>Vai exibir um IF e uma variável que vai ou não conter o JSX</h4>
+                    <p>INFO: You can delete one of bellow persons (just one because the list above will broke)</p>
+                    <p className={classes.join(' ')}>Vai ficar vermelho quando houverem menos de duas pessoas</p>
+                    {persons}
+                </div>
+            </StyleRoot>
         );
 
         /* Ou posso criar o HTML no braço */
@@ -156,4 +181,5 @@ class App extends Component {
     }
 }
 
-export default App;
+//Radium é um supercomponente que emcapsula o teu componente, permitindo usar funcionalidades diferentes
+export default Radium(App);
