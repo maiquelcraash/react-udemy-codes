@@ -7,7 +7,7 @@ import styled from 'styled-components';                     //lib
 //criando um styled component
 //e recebendo uma propriedade "alt" para validar se o botão é verde ou vermelho.
 const StyledButton = styled.button`
-    background-color: ${props => props.alt ? 'blue' : 'green'};
+    background-color: ${props => props.hover ? 'blue' : 'green'};
     font: inherit;
     border: 1px solid blue;
     padding: 8px;
@@ -15,7 +15,7 @@ const StyledButton = styled.button`
     color: white;
     
     &:hover: {
-        background-color: ${props => props.alt ? 'salmon' : 'lightblue'};
+        background-color: ${props => props.hover ? 'salmon' : 'lightblue'};
         color: black
     }
 `;
@@ -29,7 +29,8 @@ class App extends Component {
             { id: 'p2', name: 'Manu', age: 29 },
             { id: 'p3', name: 'Stephanie', age: 26 }
         ],
-        otherState: 'some other value'
+        otherState: 'some other value',
+        showPersons: false
     };
 
     //criando um método dentro do componente
@@ -156,7 +157,7 @@ class App extends Component {
 
                 {/* Usando o styled component criado lá em cima*/}
                 {/* Passando um parâmetro "alt" pra usar dentro do CSS do styled component*/}
-                <StyledButton alt={this.state.showPersons}
+                <StyledButton hover={this.state.showPersons}
                     onClick={this.togglePersonsHandler}>
                     Show/hide Persons -> Styled Component
                     </StyledButton>
@@ -174,6 +175,7 @@ class App extends Component {
                             <Person
                                 name={this.state.persons[0].name}
                                 age={this.state.persons[0].age}
+                                change={this.nameChangeHandler}
                             />
                             <Person
                                 name={this.state.persons[1].name}
