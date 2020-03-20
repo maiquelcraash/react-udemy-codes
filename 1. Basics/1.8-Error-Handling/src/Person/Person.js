@@ -1,24 +1,17 @@
 import React from 'react';
-import './Person.css';
-import Radium from 'radium';
+import classes from './Person.css';
+
 
 //componentes sem state são chamados de stateless components
-const person = (props) => {
-    const style = {
-        '@media (min-width: 500px)': {
-            width: '450px'
-        }
-    }
-
+const Person = (props) => {
     //Criando um ERRO Randômico
     const rand = Math.random();
-    if (rand > 0.7) {
-        throw new Error ('Algo deu errado no componente Persons.js');
+    if (rand > 0.9) {
+        throw new Error('Algo deu errado no componente Persons.js');
     }
 
     return (
-        <div className='Person' style={style}>
-            {/* Evento onclick que recebe uma função enviada via props */}
+        <div className={classes.Person}>
             <p onClick={props.click}>I'm {props.name} and I am {props.age} years old!</p>
             <p>{props.children}</p>
             <input type="text" onChange={props.change} value={props.name} />
@@ -27,4 +20,4 @@ const person = (props) => {
     )
 };
 
-export default Radium(person);
+export default Person;

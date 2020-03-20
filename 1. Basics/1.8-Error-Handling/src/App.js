@@ -1,7 +1,25 @@
 import React, { Component } from 'react';
 import './App.css';
 import Person from './Person/Person';
-import Radium, { StyleRoot } from 'radium';                //Radium is a set of tools to manage inline styles on React elements. Styleroot aumenta as possibilidades para media queries e keyframes
+import styled from 'styled-components';                     //lib
+import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
+
+
+//criando um styled component
+//e recebendo uma propriedade "alt" para validar se o botão é verde ou vermelho.
+const StyledButton = styled.button`
+    background-color: ${props => props.hover ? 'blue' : 'green'};
+    font: inherit;
+    border: 1px solid blue;
+    padding: 8px;
+    cursor: pointer;
+    color: white;
+    
+    &:hover: {
+        background-color: ${props => props.hover ? 'salmon' : 'lightblue'};
+        color: black
+    }
+`;
 
 class App extends Component {
     //objeto com os estados (propriedades) do componente
@@ -12,7 +30,8 @@ class App extends Component {
             { id: 'p2', name: 'Manu', age: 29 },
             { id: 'p3', name: 'Stephanie', age: 26 }
         ],
-        otherState: 'some other value'
+        otherState: 'some other value',
+        showPersons: false
     };
 
     //criando um método dentro do componente
@@ -81,7 +100,7 @@ class App extends Component {
             backgroundColor: 'green',
             font: 'inherit',
             border: '1px solid blue',
-            paddind: '8px',
+            padding: '8px',
             cursor: 'pointer',
             color: "white",
             ':hover': {                         //só posso add esses subselectors com o Radium!
@@ -98,15 +117,14 @@ class App extends Component {
                 <div>
                     {/* O react automaticamente extrai e tenta renderizar aquilo que retorna do map (que é um array) */}
                     {this.state.persons.map((person, index) => {
-                        return (
-                            <Person
-                                name={person.name}
-                                age={person.age}
-                                onDelete={() => { this.deletePersonsHandler(index) }}
-                                key={person.id}
-                                change={(event) => { this.nameChangeHandler(event, person.id) }}
-                            />
-                        )
+                        return <ErrorBoundary key={person.id}>
+                                <Person
+                                    name={person.name}
+                                    age={person.age}
+                                    onDelete={() => { this.deletePersonsHandler(index) }}
+                                    change={(event) => { this.nameChangeHandler(event, person.id) }}
+                                />
+                            </ErrorBoundary>
                     })}
                 </div>
             )
@@ -126,52 +144,57 @@ class App extends Component {
 
         /* Posso retorna JSX...*/
         return (
-            /* StyleRoot é um componente do Radium que permite aplicar media queries e keyframes */
+            <div className="App">                     {/* só pode ter um root element */}
+                <h1>Hi, I'm a React App - Class Component</h1>
 
-            <StyleRoot>                                
-                <div className="App">                     {/* só pode ter um root element */}
-                    <h1>Hi, I'm a React App - Class Component</h1>
-
-                    {/* passando o estilo criado como parâmetro*/}
-                    {/*  */}
-                    <button
-                        style={style}
-                        onClick={this.togglePersonsHandler}>Show Hide Persons
+                {/* passando o estilo criado como parâmetro*/}
+                {/*  */}
+                <button
+                    style={style}
+                    onClick={this.togglePersonsHandler}>Show/Hide Persons
                 </button>
+                <br></br><br></br>
+
+                {/* Usando o styled component criado lá em cima*/}
+                {/* Passando um parâmetro "alt" pra usar dentro do CSS do styled component*/}
+                <StyledButton hover={this.state.showPersons}
+                    onClick={this.togglePersonsHandler}>
+                    Show/hide Persons -> Styled Component
+                    </StyledButton>
 
 
-                    {/* EXIBIÇÃO CONDICIONAL 1: Expressão ternária para decidir se vai exibir um bloco de pessoas ou não*/}
-                    <h4>Vai exibir usando expressão ternária e todo o bloco de JSX</h4>
-                    <p>INFO: You can Click on Manu do see reacts</p>
-                    <p>INFO: You can input text on Manu to see reacts</p>
+                {/* EXIBIÇÃO CONDICIONAL 1: Expressão ternária para decidir se vai exibir um bloco de pessoas ou não*/}
+                <h4>Vai exibir usando expressão ternária e todo o bloco de JSX</h4>
+                <p>INFO: You can Click on Manu do see reacts</p>
+                <p>INFO: You can input text on Manu to see reacts</p>
 
 
-                    {
-                        this.state.showPersons ?
-                            <div>
-                                <Person
-                                    name={this.state.persons[0].name}
-                                    age={this.state.persons[0].age}
-                                />
-                                <Person
-                                    name={this.state.persons[1].name}
-                                    age={this.state.persons[1].age}
-                                    click={this.switchNameHandler.bind(this, "Marlon")}
-                                    change={this.nameChangeHandler}
-                                >
-                                    My Hobbies: Racing
+                {
+                    this.state.showPersons ?
+                        <div>
+                            <Person
+                                name={this.state.persons[0].name}
+                                age={this.state.persons[0].age}
+                                change={this.nameChangeHandler}
+                            />
+                            <Person
+                                name={this.state.persons[1].name}
+                                age={this.state.persons[1].age}
+                                click={this.switchNameHandler.bind(this, "Marlon")}
+                                change={this.nameChangeHandler}
+                            >
+                                My Hobbies: Racing
                         </Person>
-                            </div> : null
-                    }
-                    <hr />
+                        </div> : null
+                }
+                <hr />
 
-                    {/* EXIBIÇÃO CONDICIONAL 2: Outra forma é testar se tem pessoas (ver if lá em cima) e popular a variável diretamente */}
-                    <h4>Vai exibir um IF e uma variável que vai ou não conter o JSX</h4>
-                    <p>INFO: You can delete one of bellow persons (just one because the list above will broke)</p>
-                    <p className={classes.join(' ')}>Vai ficar vermelho quando houverem menos de duas pessoas</p>
-                    {persons}
-                </div>
-            </StyleRoot>
+                {/* EXIBIÇÃO CONDICIONAL 2: Outra forma é testar se tem pessoas (ver if lá em cima) e popular a variável diretamente */}
+                <h4>Vai exibir um IF e uma variável que vai ou não conter o JSX</h4>
+                <p>INFO: You can delete one of bellow persons (just one because the list above will broke)</p>
+                <p className={classes.join(' ')}>Vai ficar vermelho quando houverem menos de duas pessoas</p>
+                {persons}
+            </div>
         );
 
         /* Ou posso criar o HTML no braço */
@@ -182,4 +205,4 @@ class App extends Component {
 }
 
 //Radium é um supercomponente que emcapsula o teu componente, permitindo usar funcionalidades diferentes
-export default Radium(App);
+export default App;
