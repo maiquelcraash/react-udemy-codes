@@ -37,6 +37,12 @@ class Persons extends Component {
         console.log('[Persons.js] componentDidUpdate', prevProps);
     }
 
+
+    /* Posso fazer alguma coisa com o componente antes que ele seja removido */
+    componentWillUnmount(){
+        console.log('[Persons.js] componentWillUnmount');
+    }
+
     render() {
         console.log('[Persons.js] Rendering')
 

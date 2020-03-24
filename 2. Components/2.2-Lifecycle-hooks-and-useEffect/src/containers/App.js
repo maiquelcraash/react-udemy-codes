@@ -19,7 +19,8 @@ class App extends Component {
         { id: 'asdf11', name: 'Stephanie', age: 26 }
       ],
       otherState: 'some other value',
-      showPersons: false
+      showPersons: false,
+      showCockpit: true
     }
   }
 
@@ -43,7 +44,18 @@ class App extends Component {
     console.log('[App.js] ComponentDidMount');
   }
 
+  /* é invocado imediatamente após alguma atualização ocorrer. Este método não é chamado pelo initial render.*/
+  componentDidUpdate() {
+    console.log('[App.js] ComponentDidUpdate');
+  }
 
+  /* shouldComponentUpdate() é executado antes da renderização, quando novas props ou state são recebidos. 
+  O valor default é true. Este método não é chamado na renderização inicial ou quando forceUpdate()é usado. 
+  É possível impedir que o componente atualize, avaliando as propriedades, por exemplo */
+  shouldComponentUpdate(nextProps, nextState) {
+    console.log('[App.js] shouldComponentUpdate', nextProps, nextState);
+    return true;
+  }
 
   nameChangedHandler = (event, id) => {
     const personIndex = this.state.persons.findIndex(p => {
@@ -92,14 +104,20 @@ class App extends Component {
 
     return (
       <div className={classes.App}>
+
+        {/* só um código rápido para deletar o cockpit*/}
+        <button onClick={() => { this.setState({ showCockpit: false }) }}>Delete cockpit </button>
+
         {/* Por ser class base component, tanto state quanto props são propriedades locais e podem ser acessados via this. */}
+        {this.state.showCockpit ?
         <Cockpit
           title={this.props.appTitle}
           showPersons={this.state.showPersons}
           persons={this.state.persons}
           clicked={this.togglePersonsHandler}
-        />
+        /> : null }
         {persons}
+        
       </div>
     );
     // return React.createElement('div', {className: 'App'}, React.createElement('h1', null, 'Does this work now?'));
